@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use http\Env\Response;
+use App\Models\GetClothesData;
+use App\Models\GetWarehouseData;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class GetMaterialsController extends Controller
 {
     function get(Request $request)
     {
-        $warehouse_data = DB::select('SELECT * FROM get_warehouse_data()');
+        $warehouse_data = GetWarehouseData::get();
 
         $result = [
             'result' => []
         ];
         foreach ($request->all() as $product) {
-            $components = DB::select('SELECT * FROM get_clothes_data(:name, :qty)', [
-                'name' => $product['product_name'],
-                'qty' => $product['product_qty']
-            ]);
+            $components = GetClothesData::get($product['product_name'], $product['product_qty']);
+
             $item = [
                 'product_name' => $product['product_name'],
                 'product_qty' => $product['product_qty'],
